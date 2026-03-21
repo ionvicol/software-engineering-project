@@ -1,0 +1,11 @@
+extends layout
+block content
+    - console.log(data)
+    .main-content
+        h1 Single student
+        p Name: #{student.name}
+        p Programme: #{programme.programme}
+        p Modules:
+        ul
+            each module in modules
+                li #{module}
