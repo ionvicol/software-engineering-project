@@ -1,0 +1,11 @@
+doctype html
+html(lang='en')
+  include partials/head.pug
+  body
+    include partials/nav.pug
+    main.container
+      h1 Tags
+      p Filter posts using tags.
+      .tag-row
+        each tag in tags
+          a.tag(href=`/tags/${tag.tag_id}`) #{tag.name} (#{tag.post_count})

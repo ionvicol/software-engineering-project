@@ -1,0 +1,16 @@
+doctype html
+html(lang='en')
+  include partials/head.pug
+  body
+    include partials/nav.pug
+    main.container
+      h1 Posts tagged: #{tag.name}
+      if posts.length
+        .list-grid
+          each post in posts
+            article.card
+              h3
+                a(href=`/posts/${post.post_id}`)= post.title
+              p.meta #{post.username} • #{post.category_name} • #{new Date(post.created_at).toLocaleDateString()}
+      else
+        p No posts found for this tag.

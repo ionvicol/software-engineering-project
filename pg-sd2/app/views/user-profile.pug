@@ -1,0 +1,22 @@
+doctype html
+html(lang='en')
+  include partials/head.pug
+  body
+    include partials/nav.pug
+    main.container
+      .card
+        h1= user.username
+        p.meta Email: #{user.email}
+        p.meta Reputation points: #{user.reputation_points}
+        p.meta Joined: #{new Date(user.created_at).toLocaleDateString()}
+        p= user.bio
+      h2 Posts by this user
+      if posts.length
+        .list-grid
+          each post in posts
+            article.card
+              h3
+                a(href=`/posts/${post.post_id}`)= post.title
+              p.meta #{post.category_name} • #{new Date(post.created_at).toLocaleDateString()}
+      else
+        p This user has not posted yet.

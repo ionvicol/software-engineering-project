@@ -1,0 +1,23 @@
+doctype html
+html(lang='en')
+  include partials/head.pug
+  body
+    include partials/nav.pug
+    main.container
+      article.card
+        h1= post.title
+        p.meta Written by 
+          a(href=`/users/${post.user_id}`)= post.username
+          |  • 
+          a(href=`/categories/${post.category_id}`)= post.category_name
+          |  • #{new Date(post.created_at).toLocaleDateString()}
+        if post.updated_at
+          p.meta Updated: #{new Date(post.updated_at).toLocaleDateString()}
+        if post.is_spoiler
+          p.badge Spoiler warning
+        p= post.content
+        if tags.length
+          h2 Tags
+          .tag-row
+            each tag in tags
+              a.tag(href=`/tags/${tag.tag_id}`)= tag.name

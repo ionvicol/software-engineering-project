@@ -1,7 +1,30 @@
-extends layout
-block content
-    h1 #{heading}
-    p first paragraph xxx
-    p now lets loop 
-    each item in data  
-        p #{item}
+doctype html
+html(lang='en')
+  include partials/head.pug
+  body
+    include partials/nav.pug
+    main.container
+      section.hero
+        h1 Game Tips Forum
+        p Share gaming advice, discover strategies, and browse community posts by category or tag.
+      section.stats-grid
+        .card
+          h2 #{stats.users}
+          p Users
+        .card
+          h2 #{stats.posts}
+          p Posts
+        .card
+          h2 #{stats.categories}
+          p Categories
+        .card
+          h2 #{stats.tags}
+          p Tags
+      section
+        h2 Latest posts
+        .list-grid
+          each post in latestPosts
+            article.card
+              h3
+                a(href=`/posts/${post.post_id}`)= post.title
+              p.meta Posted by #{post.username} • #{post.category_name} • #{new Date(post.created_at).toLocaleDateString()}

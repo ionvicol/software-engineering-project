@@ -1,0 +1,15 @@
+doctype html
+html(lang='en')
+  include partials/head.pug
+  body
+    include partials/nav.pug
+    main.container
+      h1 Categories
+      p Browse posts by topic.
+      .list-grid
+        each category in categories
+          article.card
+            h2
+              a(href=`/categories/${category.category_id}`)= category.name
+            p= category.description
+            p.meta Posts: #{category.post_count}

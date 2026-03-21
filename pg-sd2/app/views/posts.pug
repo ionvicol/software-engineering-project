@@ -1,0 +1,19 @@
+doctype html
+html(lang='en')
+  include partials/head.pug
+  body
+    include partials/nav.pug
+    main.container
+      h1 Forum Posts
+      p Browse all tips and tricks shared by the community.
+      .list-grid
+        each post in posts
+          article.card
+            h2
+              a(href=`/posts/${post.post_id}`)= post.title
+            p.meta By #{post.username} • #{post.category_name} • #{new Date(post.created_at).toLocaleDateString()}
+            if post.is_spoiler
+              p.badge Spoiler
+            p= post.content.length > 160 ? post.content.substring(0, 160) + '...' : post.content
+            if post.tags
+              p.meta Tags: #{post.tags}
