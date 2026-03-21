@@ -1,6 +1,6 @@
 # Game Tips Forum - Sprint 3
 
-A minimal Sprint 3 implementation for the Software Engineering assessment.
+Sprint 3 implementation for the Software Engineering coursework.
 
 ## Included features
 
@@ -12,7 +12,7 @@ This version includes the required database-driven pages:
 - Categories page
 - Tags page
 
-## Tech stack
+## What is used
 - Node.js
 - Express.js
 - Pug
@@ -22,9 +22,9 @@ This version includes the required database-driven pages:
 
 ## Run the project
 
-```bash
+
 docker compose up --build
-```
+
 
 Then open:
 - App: http://localhost:3000
@@ -42,6 +42,6 @@ Then open:
 - `/tags/:id`
 
 ## Notes
-- Login is intentionally excluded for Sprint 3.
+
 - Sample data is loaded automatically from `sd2-db.sql` when the database container is created for the first time.
 - If the database does not refresh, delete the local `db` folder and run Docker again.
