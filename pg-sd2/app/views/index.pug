@@ -28,3 +28,12 @@ html(lang='en')
               h3
                 a(href=`/posts/${post.post_id}`)= post.title
               p.meta Posted by #{post.username} • #{post.category_name} • #{new Date(post.created_at).toLocaleDateString()}
+      section
+        h2 Top contributors
+        .list-grid
+          each user in topContributors
+            article.card
+              h3
+                a(href=`/users/${user.user_id}`)= user.username
+              p.meta Reputation: #{user.reputation_points} • Posts: #{user.post_count}
+              p.rank-badge(class=`rank-${user.rank.toLowerCase()}`)= user.rank

@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get('/', async (req, res, next) => {
   try {
-    const [userCount, postCount, categoryCount, tagCount, latestPosts] = await Promise.all([
+    const [userCount, postCount, categoryCount, tagCount, latestPosts, topContributors] = await Promise.all([
       db.query('SELECT COUNT(*) AS total FROM users'),
       db.query('SELECT COUNT(*) AS total FROM posts'),
       db.query('SELECT COUNT(*) AS total FROM categories'),
@@ -28,8 +28,31 @@ app.get('/', async (req, res, next) => {
         JOIN categories c ON p.category_id = c.category_id
         ORDER BY p.created_at DESC
         LIMIT 5
+      `),
+      db.query(`
+        SELECT u.user_id, u.username, u.reputation_points, COUNT(p.post_id) AS post_count
+        FROM users u
+        LEFT JOIN posts p ON p.user_id = u.user_id
+        GROUP BY u.user_id
+        ORDER BY u.reputation_points DESC, post_count DESC, u.username ASC
+        LIMIT 5
       `)
     ]);
+
+    const rankedContributors = topContributors.map((user) => {
+      let rank = 'Bronze';
+      if (user.reputation_points >= 220) {
+        rank = 'Diamond';
+      } else if (user.reputation_points >= 160) {
+        rank = 'Platinum';
+      } else if (user.reputation_points >= 110) {
+        rank = 'Gold';
+      } else if (user.reputation_points >= 70) {
+        rank = 'Silver';
+      }
+
+      return { ...user, rank };
+    });
 
     res.render('index', {
       title: 'Game Tips Forum',
@@ -40,6 +63,7 @@ app.get('/', async (req, res, next) => {
         tags: tagCount[0].total,
       },
       latestPosts,
+      topContributors: rankedContributors,
     });
   } catch (err) {
     next(err);

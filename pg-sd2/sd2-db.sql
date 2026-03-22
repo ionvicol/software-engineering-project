@@ -92,3 +92,42 @@ INSERT INTO post_tags (post_id, tag_id) VALUES
 (5, 5), (5, 1),
 (6, 6),
 (7, 3), (7, 1);
+
+INSERT INTO users (username, email, password_hash, bio, reputation_points) VALUES
+('RaidPilot', 'raidpilot@example.com', 'hash6', 'Leads raid groups and explains team mechanics.', 245),
+('StealthPixel', 'stealthpixel@example.com', 'hash7', 'Stealth game fan with route planning tips.', 175),
+('ArenaSpark', 'arenaspark@example.com', 'hash8', 'Competitive player focused on ranked consistency.', 198),
+('CraftNomad', 'craftnomad@example.com', 'hash9', 'Survival and crafting enthusiast.', 132),
+('RetroByte', 'retrobyte@example.com', 'hash10', 'Old-school gamer sharing classic strategies.', 88);
+
+INSERT INTO categories (name, description) VALUES
+('Esports Strategy', 'Competitive ranked and tournament-oriented advice.'),
+('Survival Crafting', 'Resource routes, crafting systems and base defense tips.');
+
+INSERT INTO tags (name) VALUES
+('raid'),
+('stealth'),
+('ranked'),
+('economy'),
+('crafting'),
+('teamplay');
+
+INSERT INTO posts (user_id, category_id, title, content, created_at, updated_at, is_spoiler) VALUES
+(6, 2, 'Raid opener for the Ember Colossus', 'Start with defensive cooldowns during the first fire pulse, rotate positions clockwise, and assign one caller for phase transitions to avoid overlap mistakes.', '2025-03-12 19:10:00', NULL, FALSE),
+(7, 1, 'Beginner stealth checklist before each mission', 'Disable unnecessary gadgets, study guard patterns for one minute, then commit to a simple route with two fallback paths. Consistency beats speed early on.', '2025-03-13 08:45:00', NULL, FALSE),
+(8, 5, 'How to review your ranked losses effectively', 'After each loss, note one positioning error and one decision error. Focus on fixing only one of them for the next three matches to build stable improvement.', '2025-03-13 21:30:00', '2025-03-14 09:20:00', FALSE),
+(9, 6, 'Fast iron and fiber route for day one', 'Collect river reeds first, then rotate to abandoned huts for iron scraps. Craft tier-one tools before night to secure early mobility and defense.', '2025-03-14 17:00:00', NULL, FALSE),
+(10, 3, 'Classic co-op tactic: split and scout safely', 'Move in pairs, keep one player on utility, and regroup every two objectives. This old tactic still wins in modern objective-based modes.', '2025-03-15 12:25:00', NULL, FALSE),
+(6, 2, 'Avoiding wipe mechanics in phase three', 'When the arena glows red, stop damage and prioritize movement markers. Surviving the mechanic is worth more than squeezing extra damage.', '2025-03-16 20:40:00', NULL, TRUE),
+(8, 5, 'Economy management in overtime rounds', 'Buy only core utility before overtime and keep one flexible slot for counter-tools. Stable economy choices prevent panic buys in deciding rounds.', '2025-03-17 18:05:00', NULL, FALSE),
+(9, 6, 'Base layout that defends against early raids', 'Place storage near inner walls, funnel entries with traps, and keep a hidden backup stash. Compact layouts reduce chaos during first-week attacks.', '2025-03-18 15:50:00', NULL, FALSE);
+
+INSERT INTO post_tags (post_id, tag_id) VALUES
+(8, 7), (8, 12),
+(9, 1), (9, 8),
+(10, 9), (10, 10),
+(11, 11), (11, 5),
+(12, 3), (12, 12),
+(13, 7), (13, 2),
+(14, 9), (14, 10),
+(15, 11), (15, 6);
