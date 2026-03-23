@@ -21,3 +21,8 @@ html(lang='en')
           .tag-row
             each tag in tags
               a.tag(href=`/tags/${tag.tag_id}`)= tag.name
+
+        // Voting buttons (UI placeholder for Sprint 4)
+        div(style="margin-top: 20px;")
+          button.vote-up ▲ Upvote
+          button.vote-down ▼ Downvote

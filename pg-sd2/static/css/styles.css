@@ -22,7 +22,7 @@ a:hover { text-decoration: underline; }
 .downvote, .vote-down { color: var(--downvote); font-weight: 600; }
 .text-muted, .secondary-text { color: var(--muted); }
 .container { width: min(1100px, 92%); margin: 0 auto; }
-.navbar { background: #0c0c14; border-bottom: 1px solid var(--border); }
+.navbar { background: #121212; border-bottom: 1px solid var(--border); }
 .navbar .container { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; }
 .brand { font-weight: bold; font-size: 1.2rem; }
 .nav-links { display: flex; gap: 1rem; flex-wrap: wrap; }
@@ -97,4 +97,20 @@ main { padding: 2rem 0 3rem; }
 .button:hover {
   text-decoration: none;
   border-color: #5ad6dc;
+}.brand {
+  color: var(--accent);
+}
+
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  transition: 0.2s;
+}
+.vote-up, .vote-down {
+  margin-right: 10px;
+  background: transparent;
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
 }
