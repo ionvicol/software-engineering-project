@@ -114,3 +114,8 @@ main { padding: 2rem 0 3rem; }
   border-radius: 6px;
   cursor: pointer;
 }
+.back-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+}

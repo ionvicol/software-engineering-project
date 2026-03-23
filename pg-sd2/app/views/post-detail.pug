@@ -4,6 +4,8 @@ html(lang='en')
   body
     include partials/nav.pug
     main.container
+      div.back-bar
+             a.button(href="/posts") ← Back to Posts
       article.card
         h1= post.title
         p.meta Written by 
@@ -30,3 +32,4 @@ html(lang='en')
            span.vote-up ▲ 0
             |  
            span.vote-down ▼ 0
+            
