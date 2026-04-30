@@ -8,8 +8,6 @@ The “Game Tips and Tricks Forum” is an online platform created for gamers to
 
 ---
 
----
-
 ## 1. Tests
 
 Two test suites, run separately for speed:
