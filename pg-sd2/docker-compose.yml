@@ -1,10 +1,10 @@
-version: '3.3'
 services:
   web:
     build:
       context: ./
     volumes:
       - .:/src
+      - /src/node_modules           # don't let host overwrite container's node_modules
     command: supervisor -e 'js,pug,html,css,sql' index.js
     ports:
       - "3000:3000"
@@ -14,24 +14,33 @@ services:
       DB_CONTAINER: db
       DB_PORT: 3306
       MYSQL_ROOT_USER: root
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: sd2-db
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-password}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-sd2-db}
+      SESSION_SECRET: ${SESSION_SECRET:-dev-secret-change-me}
+
   db:
     image: mysql:8.0
     restart: always
-    env_file:
-      - ./.env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-password}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-sd2-db}
     ports:
       - "3308:3306"
     volumes:
-      - ./db:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
       - ./sd2-db.sql:/docker-entrypoint-initdb.d/01-sd2-db.sql
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     restart: always
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-password}
     ports:
       - "8081:80"
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:

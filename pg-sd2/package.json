@@ -1,21 +1,31 @@
 {
-  "name": "sd2-example",
+  "name": "game-tips-forum",
   "version": "1.0.0",
-  "description": "",
+  "description": "Game Tips & Tricks Forum — Software Engineering coursework (Sprint 3 + Sprint 4 extensions + E2E + Cloud)",
   "main": "index.js",
   "scripts": {
     "start": "supervisor index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "seed-passwords": "node app/scripts/seed-passwords.js",
+    "lint": "node --check index.js && find app -name '*.js' -exec node --check {} +",
+    "test": "node --test tests/smoke.test.js",
+    "test:e2e": "nightwatch --env chromeHeadless",
+    "test:e2e:headed": "nightwatch --env default"
   },
-  "author": "",
+  "author": "Ion Vicol, Papys Nsingi, Daniele Ganea, Omar Fardin Aziz",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^10.0.0",
-    "express": "^4.17.1",
-    "mysql": "^2.18.1",
-    "mysql2": "^2.3.3",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "mysql2": "^3.11.0",
     "pug": "^3.0.3",
-    "sqlite3": "^5.1.7",
     "supervisor": "^0.12.0"
+  },
+  "devDependencies": {
+    "chromedriver": "^131.0.0",
+    "nightwatch": "^3.7.0",
+    "supertest": "^7.0.0"
   }
 }
+
