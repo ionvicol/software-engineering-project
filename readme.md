@@ -44,10 +44,9 @@ so they never collide with seed data or with each other.
 
 The repo ships with a `render.yaml` blueprint:
 
-1. Push the repo to GitHub.
-2. In Render's dashboard, click **New → Blueprint** and point it at the repo.
-3. Render reads `render.yaml`, provisions the web service and the MySQL private service, and assigns an HTTPS URL.
-4. Open the Render shell for the web service and run once:
+- In Render's dashboard, click **New → Blueprint** and point it at the repo.
+- Render reads `render.yaml`, provisions the web service and the MySQL private service, and assigns an HTTPS URL.
+- Open the Render shell for the web service and run once:
    ```
    mysql -h $DB_CONTAINER -u root -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < /src/sd2-db.sql
    npm run seed-passwords
