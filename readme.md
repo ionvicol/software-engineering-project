@@ -8,38 +8,9 @@ The “Game Tips and Tricks Forum” is an online platform created for gamers to
 
 ---
 
-## 1. Run it locally
-
-You only need Docker installed.
-
-```bash
-git clone https://github.com/ionvicol/software-engineering-project
-cd software-engineering-project/pg-sd2
-cp .env.example .env
-docker compose up --build
-# In a second terminal, hash the seed passwords once:
-docker compose exec web npm run seed-passwords
-```
-
-Open <http://localhost:3000> · phpMyAdmin: <http://localhost:8081> (root / password).
-
-### Seed accounts (password is `password123` for all)
-
-| Username     | Role  | Why                                                |
-| ------------ | ----- | -------------------------------------------------- |
-| `RaidPilot`  | admin | Can access `/admin/reports`                        |
-| `SpeedyFox`  | user  | Has the highest reputation                         |
-| `NoobHunter` | user  | Owns several posts; has seed DMs in inbox          |
-
-### Reset
-
-```bash
-docker compose down -v   # nukes the MySQL volume so the schema reseeds
-```
-
 ---
 
-## 2. Tests
+## 1. Tests
 
 Two test suites, run separately for speed:
 
@@ -71,7 +42,7 @@ so they never collide with seed data or with each other.
 
 ---
 
-## 3. Deploy to Render (cloud-based infrastructure)
+## 2. Deploy to Render (cloud-based infrastructure)
 
 The repo ships with a `render.yaml` blueprint:
 
@@ -91,7 +62,7 @@ Notes:
 
 ---
 
-## 4. What's in the folders?
+## 3. What's in the folders?
 
 ```
 pg-sd2/
@@ -141,7 +112,7 @@ pg-sd2/
 
 ---
 
-## 5. Features
+## 4. Features
 
 - Users list + profile · post browse with filters · post detail with score
 - Auth (bcrypt + sessions) · post CRUD with ownership checks
@@ -166,7 +137,7 @@ pg-sd2/
 
 ---
 
-## 6. Database schema
+## 5. Database schema
 
 Nine tables. All foreign keys use `ON DELETE CASCADE` where it's safe so
 deleting a user automatically cleans up their posts, comments, votes,
@@ -182,7 +153,7 @@ which means it can never drift out of sync.
 
 ---
 
-## 7. Security & ethics
+## 6. Security & ethics
 
 - Bcrypt (10 rounds) for passwords. No plain-text storage or logging.
 - Parameterised SQL throughout.
