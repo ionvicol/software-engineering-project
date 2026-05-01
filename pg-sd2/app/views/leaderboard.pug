@@ -1,0 +1,52 @@
+//- app/views/leaderboard.pug
+extends layout
+
+block content
+  .page-head
+    h1 🏆 Leaderboard
+    p.meta Top contributors and community champions
+
+  table.leaderboard
+    thead
+      tr
+        th #
+        th User
+        th Rank
+        th Reputation
+        th Posts
+        th Total post score
+    tbody
+      each user, i in users
+        tr(class=(i < 3 ? 'top-three' : ''))
+          td.rank-cell= i + 1
+          td
+            a(href=`/users/${user.user_id}`)= user.username
+            if user.bio
+              p.meta= user.bio
+          td
+            span.rank-badge(class=`rank-${user.rank.toLowerCase()}`)= user.rank
+          td.numeric= user.reputation_points
+          td.numeric= user.post_count
+          td.numeric= user.total_post_score
+
+  .card.rank-explainer
+    h3 How reputation works
+    p Reputation is earned through community recognition:
+    ul
+      li +1 reputation per upvote you receive on your posts
+      li −1 reputation per downvote you receive
+      li Voting on your own posts is not allowed
+    h3 Rank thresholds
+    ul
+      li 
+        span.rank-badge.rank-novice Novice
+        |  — 0–500 reputation
+      li 
+        span.rank-badge.rank-expert Expert
+        |  — 501–1,500 reputation
+      li 
+        span.rank-badge.rank-master Master
+        |  — 1,501–2,500 reputation
+      li 
+        span.rank-badge.rank-legend Legend
+        |  — 2,501+ reputation

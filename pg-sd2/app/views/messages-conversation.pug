@@ -1,0 +1,25 @@
+//- app/views/messages-conversation.pug
+extends layout
+
+block content
+  .back-bar
+    a.link-small(href="/messages") ← Back to inbox
+
+  .page-head
+    h1 Chat with 
+      a(href=`/users/${partner.user_id}`)= partner.username
+
+  .message-thread
+    if messages.length === 0
+      p.meta No messages yet — say hello below.
+    else
+      each m in messages
+        .message-bubble(class=(m.sender_user_id === me ? 'mine' : 'theirs'))
+          p.message-content= m.content
+          p.meta.message-time= new Date(m.created_at).toLocaleString()
+
+  form.message-compose(action=`/messages/with/${partner.user_id}`, method="post")
+    label.visually-hidden(for="content") Message
+    textarea#content(name="content", rows="2", required, minlength="1", maxlength="2000",
+                    placeholder=`Message ${partner.username}…`)
+    button.button.button-accent(type="submit") Send

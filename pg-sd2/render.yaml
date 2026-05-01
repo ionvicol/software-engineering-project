@@ -1,0 +1,68 @@
+# render.yaml
+#
+# Render.com blueprint. Deploys the project as two services:
+#
+#   - web : the Node.js Express app, built from pg-sd2/Dockerfile
+#   - db  : a MySQL 8 instance using Render's private-service pattern
+#
+# Render reads this file when you click "New Blueprint Instance" in
+# their dashboard and point it at the repo. After deployment:
+#   1) Render assigns a public HTTPS URL to the web service.
+#   2) Web reaches db on the internal hostname `gametips-db` (private only).
+#   3) Run the seed-passwords script ONCE from the Render shell:
+#        npm run seed-passwords
+#
+# Free tier notes:
+#   - Web service spins down after 15 min idle and cold-starts on next request.
+#   - MySQL on private services costs a small monthly fee on Render; for a
+#     coursework demo you can also point the app at a free PlanetScale,
+#     Aiven free, or Railway MySQL by overriding the env vars in the
+#     dashboard instead of provisioning the db service in this file.
+
+services:
+  - type: web
+    name: gametips-web
+    runtime: docker
+    rootDir: pg-sd2
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: SESSION_SECRET
+        generateValue: true              # Render makes a strong random secret
+      - key: DB_CONTAINER
+        fromService:
+          type: pserv
+          name: gametips-db
+          property: host
+      - key: DB_PORT
+        value: 3306
+      - key: MYSQL_ROOT_USER
+        value: root
+      - key: MYSQL_ROOT_PASSWORD
+        fromService:
+          type: pserv
+          name: gametips-db
+          envVarKey: MYSQL_ROOT_PASSWORD
+      - key: MYSQL_DATABASE
+        value: sd2-db
+
+  - type: pserv                            # private service — not internet-reachable
+    name: gametips-db
+    runtime: image
+    image:
+      url: mysql:8.0
+    plan: starter
+    disk:
+      name: mysql-data
+      mountPath: /var/lib/mysql
+      sizeGB: 1
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        generateValue: true
+      - key: MYSQL_DATABASE
+        value: sd2-db
