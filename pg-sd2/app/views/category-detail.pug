@@ -1,19 +1,29 @@
-doctype html
-html(lang='en')
-  include partials/head.pug
-  body
-    include partials/nav.pug
-    main.container
-      .card
-        h1= category.name
-        p= category.description
-      h2 Posts in this category
-      if posts.length
-        .list-grid
-          each post in posts
-            article.card
-              h3
-                a(href=`/posts/${post.post_id}`)= post.title
-              p.meta #{post.username} • #{new Date(post.created_at).toLocaleDateString()}
-      else
-        p No posts are in this category yet.
+//- app/views/category-detail.pug
+extends layout
+
+block content
+  .card.profile-header
+    h1= category.name
+    if category.description
+      p= category.description
+
+  h2 Posts in this category
+  if posts.length
+    .list-grid
+      each post in posts
+        article.card.post-card
+          .post-card-score
+            span.score-number= post.score
+            span.score-label score
+          .post-card-body
+            h3
+              a(href=`/posts/${post.post_id}`)= post.title
+            p.meta
+              | by #{post.username}
+              |  · #{new Date(post.created_at).toLocaleDateString()}
+            if post.is_spoiler
+              p
+                span.badge.badge-spoiler ⚠ Spoiler
+  else
+    .card.empty-state
+      p No posts are in this category yet.

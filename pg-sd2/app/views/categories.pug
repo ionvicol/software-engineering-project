@@ -1,15 +1,16 @@
-doctype html
-html(lang='en')
-  include partials/head.pug
-  body
-    include partials/nav.pug
-    main.container
-      h1 Categories
-      p Browse posts by topic.
-      .list-grid
-        each category in categories
-          article.card
-            h2
-              a(href=`/categories/${category.category_id}`)= category.name
-            p= category.description
-            p.meta Posts: #{category.post_count}
+//- app/views/categories.pug
+extends layout
+
+block content
+  .page-head
+    h1 Categories
+    p.meta Browse posts by topic.
+
+  .list-grid
+    each c in categories
+      article.card
+        h2
+          a(href=`/categories/${c.category_id}`)= c.name
+        p.meta #{c.post_count} post#{c.post_count === 1 ? '' : 's'}
+        if c.description
+          p= c.description

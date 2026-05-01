@@ -1,39 +1,66 @@
-doctype html
-html(lang='en')
-  include partials/head.pug
-  body
-    include partials/nav.pug
-    main.container
-      section.hero
-        h1 Game Tips Forum
-        p Share gaming advice, discover strategies, and browse community posts by category or tag.
-      section.stats-grid
-        .card
-          h2 #{stats.users}
-          p Users
-        .card
-          h2 #{stats.posts}
-          p Posts
-        .card
-          h2 #{stats.categories}
-          p Categories
-        .card
-          h2 #{stats.tags}
-          p Tags
-      section
+//- app/views/index.pug
+extends layout
+
+block content
+  section.hero
+    h1 Welcome to GameTips Forum
+    p.lead Share gaming knowledge, discover new strategies, and connect with fellow gamers.
+    if !currentUser
+      a.button.button-accent(href="/register") Join the community
+      a.button.button-ghost(href="/posts") Browse posts
+
+  section.stats-grid
+    .card.stat-card
+      h2= stats.users
+      p Members
+    .card.stat-card
+      h2= stats.posts
+      p Posts
+    .card.stat-card
+      h2= stats.categories
+      p Categories
+    .card.stat-card
+      h2= stats.tags
+      p Tags
+
+  .home-grid
+    section.home-main
+      .section-head
         h2 Latest posts
-        .list-grid
-          each post in latestPosts
-            article.card
+        a.link-small(href="/posts") View all →
+      .list-grid
+        each post in latestPosts
+          article.card.post-card
+            .post-card-score
+              span.score-number= post.score
+              span.score-label score
+            .post-card-body
               h3
                 a(href=`/posts/${post.post_id}`)= post.title
-              p.meta Posted by #{post.username} • #{post.category_name} • #{new Date(post.created_at).toLocaleDateString()}
+              p.meta
+                | by 
+                a(href=`/users/${post.user_id}`)= post.username
+                |  · 
+                a(href=`/categories/${post.category_id}`)= post.category_name
+                |  · #{new Date(post.created_at).toLocaleDateString()}
+              if post.is_spoiler
+                span.badge.badge-spoiler ⚠ Spoiler
+
+    aside.home-side
       section
         h2 Top contributors
-        .list-grid
+        ol.contributor-list
           each user in topContributors
-            article.card
-              h3
-                a(href=`/users/${user.user_id}`)= user.username
-              p.meta Reputation: #{user.reputation_points} • Posts: #{user.post_count}
-              p.rank-badge(class=`rank-${user.rank.toLowerCase()}`)= user.rank
+            li
+              a(href=`/users/${user.user_id}`)= user.username
+              span.rank-badge(class=`rank-${user.rank.toLowerCase()}`)= user.rank
+              span.meta · #{user.reputation_points} pts
+        a.link-small(href="/leaderboard") Full leaderboard →
+
+      section
+        h2 Popular categories
+        ul.category-list
+          each cat in popularCategories
+            li
+              a(href=`/categories/${cat.category_id}`)= cat.name
+              span.meta · #{cat.post_count} posts

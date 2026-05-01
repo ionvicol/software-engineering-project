@@ -1,11 +1,12 @@
-doctype html
-html(lang='en')
-  include partials/head.pug
-  body
-    include partials/nav.pug
-    main.container
-      h1 Tags
-      p Filter posts using tags.
-      .tag-row
-        each tag in tags
-          a.tag(href=`/tags/${tag.tag_id}`) #{tag.name} (#{tag.post_count})
+//- app/views/tags.pug
+extends layout
+
+block content
+  .page-head
+    h1 Tags
+    p.meta Filter posts using tags.
+
+  .tag-row.tag-cloud
+    each t in tags
+      a.tag(href=`/tags/${t.tag_id}`) ##{t.name}
+        span.tag-count #{t.post_count}
