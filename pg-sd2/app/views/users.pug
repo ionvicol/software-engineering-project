@@ -1,16 +1,20 @@
-doctype html
-html(lang='en')
-  include partials/head.pug
-  body
-    include partials/nav.pug
-    main.container
-      h1 Community Members
-      p Browse public gamer profiles and contribution totals.
-      .list-grid
-        each user in users
-          article.card
-            h2
-              a(href=`/users/${user.user_id}`)= user.username
-            p.meta Reputation: #{user.reputation_points}
-            p.meta Posts created: #{user.post_count}
-            p= user.bio
+//- app/views/users.pug
+extends layout
+
+block content
+  .page-head
+    h1 Community Members
+    p.meta Browse public gamer profiles and contribution totals.
+
+  .list-grid
+    each user in users
+      article.card.user-card
+        h2
+          a(href=`/users/${user.user_id}`)= user.username
+        p
+          span.rank-badge(class=`rank-${user.rank.toLowerCase()}`)= user.rank
+        p.meta Reputation: #{user.reputation_points}
+        p.meta Posts: #{user.post_count}
+        p.meta Joined: #{new Date(user.created_at).toLocaleDateString()}
+        if user.bio
+          p= user.bio

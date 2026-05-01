@@ -1,0 +1,40 @@
+//- app/views/account.pug
+extends layout
+
+block content
+  .auth-page
+    h1 Account settings
+    p.meta Manage your data and account.
+
+    if errors && errors.length
+      .flash.flash-error
+        ul
+          each err in errors
+            li= err
+
+    .card
+      h2 Your data
+      p.meta The forum stores the following information about you:
+      ul
+        li Username — #{account.username}
+        li Email — #{account.email}
+        li Bio — #{account.bio || '(empty)'}
+        li Reputation points — #{account.reputation_points}
+        li Account created — #{new Date(account.created_at).toLocaleString()}
+      p.meta
+        | This is the minimum we need to operate the forum. See the 
+        a(href="/privacy") privacy notice
+        |  for full details.
+
+    .card.danger-zone
+      h2.text-danger Delete account
+      p This will permanently delete your account, your posts, comments, votes, reports, and direct messages. This cannot be undone.
+      p.meta To confirm, type your username (#{account.username}) below and press Delete.
+      form.auth-form(action="/account/delete", method="post",
+                    onsubmit="return confirm('This is permanent. Are you sure?')")
+        .form-group
+          label.visually-hidden(for="confirm_username") Type your username to confirm
+          input#confirm_username(type="text", name="confirm_username", required, placeholder="Type your username")
+        .form-actions
+          button.button.button-danger(type="submit") Delete my account
+          a.button.button-ghost(href="/") Cancel
