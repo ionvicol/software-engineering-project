@@ -1,0 +1,38 @@
+//- app/views/admin-reports.pug
+extends layout
+
+block content
+  .page-head
+    h1 Reports queue
+    p.meta Review and resolve community-flagged posts.
+
+  if reports.length === 0
+    .card.empty-state
+      p No reports right now. The community is in good shape.
+  else
+    table.report-table
+      thead
+        tr
+          th Status
+          th Post
+          th Reason
+          th Reporter
+          th Created
+          th Action
+      tbody
+        each r in reports
+          tr(class=`report-${r.status}`)
+            td
+              span.badge(class=r.status === 'open' ? 'badge-spoiler' : '')= r.status
+            td
+              a(href=`/posts/${r.post_id}`)= r.title
+            td= r.reason
+            td
+              a(href=`/users/${r.reporter_id}`)= r.reporter_name
+            td.meta= new Date(r.created_at).toLocaleString()
+            td
+              if r.status === 'open'
+                form.inline-form(action=`/admin/reports/${r.report_id}/resolve`, method="post")
+                  button.button.button-ghost(type="submit") Mark resolved
+              else
+                span.meta —
