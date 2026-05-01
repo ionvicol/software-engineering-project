@@ -1,12 +1,10 @@
-doctype html
-html(lang='en')
-  include partials/head.pug
-  body
-    include partials/nav.pug
-    main.container
-      .card
-        h1 Server error
-        p Something went wrong while loading the page.
-        if error
-          p.meta #{error}
-        a.button(href='/') Return home
+//- app/views/500.pug
+extends layout
+
+block content
+  .card.empty-state
+    h1 Server error
+    p Something went wrong while loading the page.
+    if error
+      p.meta= error
+    a.button.button-accent(href="/") Return home

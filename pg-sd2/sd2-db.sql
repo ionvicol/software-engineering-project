@@ -1,5 +1,5 @@
 -- =====================================================================
--- Game Tips Forum — database schema and seed data for MySQL
+-- Game Tips Forum — database schema (Sprint 3)
 -- ---------------------------------------------------------------------
 -- Drops are ordered to respect foreign keys: child tables first.
 -- Run this file via phpMyAdmin import OR let docker-compose mount it

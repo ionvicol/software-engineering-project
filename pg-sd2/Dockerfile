@@ -23,6 +23,3 @@ CMD if [ "$NODE_ENV" = "production" ]; then \
     else \
       supervisor -e 'js,pug,html,css,sql' index.js; \
     fi
-
-
-

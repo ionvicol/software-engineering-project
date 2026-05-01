@@ -1,6 +1,5 @@
 "use strict";
 
-// Include the app.js file.
-// This will run the code.
+// Entry point. Boots the Express app defined in app/app.js.
 console.log("entrypoint");
-const app = require("./app/app.js");
+require("./app/app.js");

@@ -1,5 +1,32 @@
-html 
-    head    
-        title #{title}
-    body 
-        block content
+//- app/views/layout.pug
+//-
+//- Base layout used by every page via `extends layout`.
+//- Holds the <head>, the nav bar, the flash slot, and the main content
+//- block. Individual pages only fill in `block content`.
+
+doctype html
+html(lang="en")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    title #{title} | Game Tips Forum
+    link(rel="stylesheet", href="/css/styles.css")
+
+  body
+    include partials/nav.pug
+
+    main.container
+      if flash
+        .flash(class=`flash-${flash.type}`)= flash.message
+      block content
+
+    footer.site-footer
+      .container
+        p.meta
+          | © GameTips Forum · 
+          a(href="/privacy") Privacy notice
+          if currentUser
+            |  · 
+            a(href="/account") Account settings
+
+    block scripts
