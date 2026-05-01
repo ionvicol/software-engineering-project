@@ -1,0 +1,28 @@
+//- app/views/messages-inbox.pug
+extends layout
+
+block content
+  .page-head
+    h1 Messages
+    p.meta Direct conversations with other community members.
+
+  if conversations.length === 0
+    .card.empty-state
+      p You have no messages yet.
+      p.meta Visit a 
+        a(href="/users") user's profile
+        |  and click "Send message" to start a conversation.
+  else
+    ul.conversation-list
+      each c in conversations
+        li.card.conversation-row(class=(c.unread_count > 0 ? 'has-unread' : ''))
+          a.conversation-link(href=`/messages/with/${c.partner_id}`)
+            .conversation-row-head
+              span.conversation-name= c.partner_username
+              span.meta #{new Date(c.last_at).toLocaleString()}
+              if c.unread_count > 0
+                span.unread-badge= c.unread_count
+            p.conversation-preview
+              if c.i_sent_last
+                span.meta You: 
+              = c.last_content.length > 120 ? c.last_content.substring(0, 120) + '…' : c.last_content
