@@ -1,22 +1,57 @@
-doctype html
-html(lang='en')
-  include partials/head.pug
-  body
-    include partials/nav.pug
-    main.container
-      .card
-        h1= user.username
-        p.meta Email: #{user.email}
-        p.meta Reputation points: #{user.reputation_points}
-        p.meta Joined: #{new Date(user.created_at).toLocaleDateString()}
-        p= user.bio
-      h2 Posts by this user
-      if posts.length
-        .list-grid
-          each post in posts
-            article.card
-              h3
-                a(href=`/posts/${post.post_id}`)= post.title
-              p.meta #{post.category_name} • #{new Date(post.created_at).toLocaleDateString()}
-      else
-        p This user has not posted yet.
+//- app/views/user-profile.pug
+extends layout
+
+block content
+  .card.profile-header
+    h1= user.username
+    p
+      span.rank-badge(class=`rank-${user.rank.toLowerCase()}`)= user.rank
+    p.meta Reputation: #{user.reputation_points} pts · Joined #{new Date(user.created_at).toLocaleDateString()}
+    if user.bio
+      p= user.bio
+    if currentUser && currentUser.user_id !== user.user_id
+      a.button.button-accent(href=`/messages/with/${user.user_id}`) ✉ Send message
+    if currentUser && currentUser.user_id === user.user_id
+      a.button.button-ghost(href="/account") ⚙ Account settings
+
+  //- Personal impact dashboard. Visible to everyone (it's a public profile),
+  //- so other community members can also see contribution at a glance.
+  section.impact-dashboard
+    h2 Impact
+    .stats-grid
+      .card.stat-card
+        h2= impact.post_count
+        p Posts
+      .card.stat-card
+        h2.stat-positive= impact.upvotes_received
+        p Upvotes received
+      .card.stat-card
+        h2.stat-negative= impact.downvotes_received
+        p Downvotes received
+      .card.stat-card
+        h2= impact.comments_received
+        p Comments received
+      .card.stat-card
+        h2(class=(impact.total_post_score >= 0 ? 'stat-positive' : 'stat-negative'))= impact.total_post_score
+        p Total post score
+
+  h2 Posts by this user
+  if posts.length
+    .list-grid
+      each post in posts
+        article.card.post-card
+          .post-card-score
+            span.score-number= post.score
+            span.score-label score
+          .post-card-body
+            h3
+              a(href=`/posts/${post.post_id}`)= post.title
+            p.meta
+              | #{post.category_name}
+              |  · #{new Date(post.created_at).toLocaleDateString()}
+              if post.is_spoiler
+                |  · 
+                span.badge.badge-spoiler ⚠ Spoiler
+  else
+    .card.empty-state
+      p This user has not posted yet.

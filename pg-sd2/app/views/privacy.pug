@@ -1,0 +1,46 @@
+//- app/views/privacy.pug
+extends layout
+
+block content
+  .auth-page
+    h1 Privacy notice
+
+    p This page explains what GameTips Forum stores about you and what we do with it. The forum is built around the principle of "minimum data for the job".
+
+    h2 Data we collect
+    ul
+      li Your chosen username and email address (used for login).
+      li Your password, stored only as a bcrypt hash — never in plain text.
+      li Optional bio text that you provide.
+      li Posts, comments, votes, reports, and direct messages that you create.
+      li The timestamp on which you created your account and each piece of content.
+
+    h2 What we do not collect
+    ul
+      li We do not collect your real name, address, phone number, or date of birth.
+      li We do not run third-party advertising trackers or analytics.
+      li We do not share data with third parties.
+
+    h2 Cookies
+    p The forum sets a single cookie used to keep you logged in. It is HTTP-only (so client-side JavaScript cannot read it) and expires after 24 hours.
+
+    h2 Your rights
+    ul
+      li 
+        strong Access — 
+        | Your profile page (#[code /users/:id]) shows the public data we hold about you. The 
+        a(href="/account") account settings page
+        |  shows everything else.
+      li 
+        strong Erasure — 
+        | You can permanently delete your account at any time from the 
+        a(href="/account") account settings page
+        | . This removes your account and every piece of content you created (cascaded automatically by foreign keys).
+      li 
+        strong Correction — 
+        | You can edit your posts and comments yourself. Bio and email changes are not yet exposed in the UI for this sprint.
+
+    h2 Contact
+    p This is a coursework project, not a production service. If you have questions, raise them with the project team via the 
+      a(href="https://github.com/ionvicol/software-engineering-project") GitHub repository
+      | .

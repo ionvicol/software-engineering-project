@@ -1,8 +1,31 @@
+//- app/views/partials/nav.pug
+//-
+//- Navigation. Public links on the left, account state on the right.
+//- currentUser is set on res.locals by the attachUser middleware.
+
 nav.navbar
   .container
-    a.brand(href='/') Game Tips Forum
-    .nav-links
-      a(href='/users') Users
-      a(href='/posts') Posts
-      a(href='/categories') Categories
-      a(href='/tags') Tags
+    .nav-left
+      a.brand(href="/") 🎮 GameTips Forum
+      .nav-links
+        a(href="/posts") Browse
+        a(href="/categories") Categories
+        a(href="/tags") Tags
+        a(href="/users") Users
+        a(href="/leaderboard") Leaderboard
+    .nav-right
+      if currentUser
+        a.button.button-accent(href="/posts/new") + Create Post
+        a.nav-message-link(href="/messages")
+          | Messages
+          if unreadMessageCount > 0
+            span.unread-badge= unreadMessageCount
+        span.nav-user
+          a(href=`/users/${currentUser.user_id}`)= currentUser.username
+        if currentUser.is_admin
+          a(href="/admin/reports") Reports
+        form.inline-form(action="/logout", method="post")
+          button.link-button(type="submit") Log out
+      else
+        a(href="/login") Log in
+        a.button.button-accent(href="/register") Register

@@ -1,0 +1,29 @@
+//- app/views/login.pug
+extends layout
+
+block content
+  .auth-page
+    h1 Log in
+    p.meta Welcome back to GameTips Forum.
+
+    if errors && errors.length
+      .flash.flash-error
+        ul
+          each err in errors
+            li= err
+
+    form.auth-form(action="/login", method="post")
+      .form-group
+        label(for="identifier") Username or email
+        input#identifier(type="text", name="identifier", required, autofocus, value=form.identifier)
+
+      .form-group
+        label(for="password") Password
+        input#password(type="password", name="password", required)
+
+      .form-actions
+        button.button.button-accent(type="submit") Log in
+
+    p.meta
+      | New here? 
+      a(href="/register") Create an account
