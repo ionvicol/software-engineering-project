@@ -1,0 +1,70 @@
+//- app/views/post-form.pug
+//- Shared by /posts/new (create) and /posts/:id/edit (edit).
+//- The route passes `mode`, `action`, `post`, `selectedTagIds`,
+//- `categories`, `tags`, and `errors`.
+
+extends layout
+
+block content
+  .form-page
+    h1= mode === 'edit' ? 'Edit Post' : 'Create a New Post'
+    p.meta Share your gaming tips, tricks, or ask questions to the community
+
+    if errors && errors.length
+      .flash.flash-error
+        ul
+          each err in errors
+            li= err
+
+    form.post-form(action=action, method="post")
+      .form-group
+        label(for="title") Title *
+        input#title(type="text", name="title", required, minlength="5", maxlength="150",
+                    value=post.title, placeholder="e.g. How to defeat the final boss in...")
+
+      .form-group
+        label(for="game_title") Game title
+        input#game_title(type="text", name="game_title", maxlength="100",
+                        value=post.game_title, placeholder="e.g. Elden Ring")
+
+      .form-group
+        label(for="media_url") Screenshot or media URL (optional)
+        input#media_url(type="url", name="media_url", maxlength="500",
+                        value=post.media_url, placeholder="https://example.com/screenshot.jpg")
+        small.meta Paste a direct image URL — it will appear at the top of your post.
+
+      .form-group
+        label(for="category_id") Category *
+        select#category_id(name="category_id", required)
+          option(value="") -- choose a category --
+          each c in categories
+            option(value=c.category_id, selected=(post.category_id === c.category_id))= c.name
+
+      .form-group
+        label(for="content") Content *
+        textarea#content(name="content", rows="10", required, minlength="10",
+                        placeholder="Share your tips, strategies, or questions in detail…")= post.content
+
+      .form-group
+        label Tags (hold Ctrl / Cmd to select multiple)
+        select(name="tag_ids", multiple, size="6")
+          each t in tags
+            option(value=t.tag_id, selected=selectedTagIds.includes(t.tag_id))= t.name
+
+      .form-group
+        label.checkbox-label
+          input(type="checkbox", name="is_spoiler", checked=post.is_spoiler)
+          |  Mark as spoiler — content will be hidden behind a click-to-reveal toggle
+
+      .form-actions
+        button.button.button-accent(type="submit")= mode === 'edit' ? 'Save changes' : 'Publish post'
+        a.button.button-ghost(href=mode === 'edit' ? `/posts/${post.post_id}` : '/posts') Cancel
+
+  aside.form-tips.card
+    h3 Tips for great posts
+    ul
+      li Be specific and detailed in your explanations
+      li Use clear paragraphs — short sentences are easier to skim
+      li Add relevant tags so others can discover your content
+      li Mark spoilers appropriately to respect other players
+      li Be respectful and constructive

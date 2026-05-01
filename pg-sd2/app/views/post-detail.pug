@@ -1,35 +1,119 @@
-doctype html
-html(lang='en')
-  include partials/head.pug
-  body
-    include partials/nav.pug
-    main.container
-      div.back-bar
-             a.button(href="/posts") ← Back to Posts
-      article.card
-        h1= post.title
-        p.meta Written by 
-          a(href=`/users/${post.user_id}`)= post.username
-          |  • 
-          a(href=`/categories/${post.category_id}`)= post.category_name
-          |  • #{new Date(post.created_at).toLocaleDateString()}
-        if post.updated_at
-          p.meta Updated: #{new Date(post.updated_at).toLocaleDateString()}
-        if post.is_spoiler
-          p.badge Spoiler warning
-        p= post.content
-        if tags.length
-          h2 Tags
-          .tag-row
-            each tag in tags
-              a.tag(href=`/tags/${tag.tag_id}`)= tag.name
+//- app/views/post-detail.pug
+extends layout
 
-        // Voting buttons (UI placeholder for Sprint 4)
-        div(style="margin-top: 20px;")
-          button.vote-up ▲ Upvote
-          button.vote-down ▼ Downvote
-          div(style="margin-top: 8px;")
-           span.vote-up ▲ 0
-            |  
-           span.vote-down ▼ 0
-            
+block content
+  .back-bar
+    a.link-small(href="/posts") ← Back to all posts
+
+  article.card.post-detail(data-post-id=post.post_id)
+    //- Vote column (left). Buttons are real <button>s; if the user is
+    //- not logged in, they degrade to a hint via JS.
+    .vote-column
+      button.vote-btn.vote-up(type="button",
+                              data-vote="1",
+                              class=(myVote === 1 ? 'is-active' : ''),
+                              aria-label="Upvote") ▲
+      .vote-score(id=`score-${post.post_id}`)= post.score
+      button.vote-btn.vote-down(type="button",
+                                data-vote="-1",
+                                class=(myVote === -1 ? 'is-active' : ''),
+                                aria-label="Downvote") ▼
+
+    .post-detail-body
+      h1= post.title
+      p.meta
+        | by 
+        a(href=`/users/${post.user_id}`)= post.username
+        |  · 
+        a(href=`/categories/${post.category_id}`)= post.category_name
+        if post.game_title
+          |  · #{post.game_title}
+        |  · #{new Date(post.created_at).toLocaleDateString()}
+        if post.updated_at
+          |  · edited #{new Date(post.updated_at).toLocaleDateString()}
+
+      if post.media_url
+        figure.post-media
+          img(src=post.media_url, alt=`Screenshot for: ${post.title}`, loading="lazy")
+
+      if post.is_spoiler
+        p
+          span.badge.badge-spoiler ⚠ Spoiler warning — click to reveal
+        details.spoiler-content
+          summary Show content
+          p.post-content= post.content
+      else
+        p.post-content= post.content
+
+      if tags.length
+        .tag-row
+          each tag in tags
+            a.tag(href=`/tags/${tag.tag_id}`) ##{tag.name}
+
+      .post-actions
+        if currentUser && (currentUser.user_id === post.user_id || currentUser.is_admin)
+          a.button.button-ghost(href=`/posts/${post.post_id}/edit`) ✎ Edit
+          form.inline-form(action=`/posts/${post.post_id}/delete`, method="post",
+                          onsubmit="return confirm('Delete this post permanently? This cannot be undone.')")
+            button.button.button-danger(type="submit") 🗑 Delete
+
+        if currentUser && currentUser.user_id !== post.user_id
+          //- Report toggle — collapsed by default to keep the page calm.
+          details.report-toggle
+            summary.link-small ⚑ Report this post
+            form.report-form(action=`/posts/${post.post_id}/report`, method="post")
+              label(for="reason") Reason (5–255 characters)
+              input#reason(type="text", name="reason", required, minlength="5", maxlength="255",
+                          placeholder="Why is this post inappropriate?")
+              button.button.button-danger(type="submit") Submit report
+
+  //- Comments
+  section#comments.comments-section
+    h2 Comments (#{comments.length})
+
+    if currentUser
+      form.comment-form(action=`/posts/${post.post_id}/comments`, method="post")
+        label.visually-hidden(for="content") Add a comment
+        textarea#content(name="content", rows="3", required, minlength="1", maxlength="2000",
+                        placeholder="Add a constructive comment…")
+        button.button.button-accent(type="submit") Post comment
+    else
+      .card.empty-state
+        p
+          a(href="/login") Log in
+          |  to join the discussion.
+
+    if comments.length === 0
+      p.meta No comments yet. Be the first to reply.
+    else
+      ul.comment-list
+        each c in comments
+          li.comment.card
+            p.meta
+              a(href=`/users/${c.user_id}`)= c.username
+              |  · #{new Date(c.created_at).toLocaleString()}
+            p= c.content
+            if currentUser && (currentUser.user_id === c.user_id || currentUser.is_admin)
+              form.inline-form(action=`/comments/${c.comment_id}/delete`, method="post",
+                              onsubmit="return confirm('Delete this comment?')")
+                button.link-button.text-danger(type="submit") Delete
+
+  //- Related posts — basic recommendation algorithm by tag overlap.
+  if related && related.length
+    section.related-section
+      h2 Related posts
+      p.meta Picked by tag overlap with this post.
+      .list-grid
+        each r in related
+          article.card.post-card
+            .post-card-body
+              h3
+                a(href=`/posts/${r.post_id}`)= r.title
+              p.meta
+                | by #{r.username}
+                |  · #{r.category_name}
+                if r.shared_tags > 0
+                  |  · #{r.shared_tags} shared tag#{r.shared_tags === 1 ? '' : 's'}
+
+block scripts
+  script(src="/js/votes.js", defer)

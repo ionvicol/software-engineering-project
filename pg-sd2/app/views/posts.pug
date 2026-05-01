@@ -1,19 +1,56 @@
-doctype html
-html(lang='en')
-  include partials/head.pug
-  body
-    include partials/nav.pug
-    main.container
-      h1 Forum Posts
-      p Browse all tips and tricks shared by the community.
-      .list-grid
-        each post in posts
-          article.card
+//- app/views/posts.pug
+extends layout
+
+block content
+  .page-head
+    h1 Browse Posts
+    p.meta Explore gaming tips, tricks, and strategies from our community
+
+  //- Filter / search bar (GET form so query params stay in the URL).
+  form.filter-bar(method="get", action="/posts")
+    .filter-row
+      input(type="search", name="q", placeholder="Search posts by title or content...", value=filters.q)
+      select(name="category")
+        option(value="") All categories
+        each c in categories
+          option(value=c.category_id, selected=(filters.category === c.category_id))= c.name
+      select(name="tag")
+        option(value="") All tags
+        each t in tags
+          option(value=t.tag_id, selected=(filters.tag === t.tag_id))= t.name
+      button.button.button-accent(type="submit") Filter
+      a.button.button-ghost(href="/posts") Reset
+
+  p.meta #{posts.length} post#{posts.length === 1 ? '' : 's'} found
+
+  if posts.length === 0
+    .card.empty-state
+      p No posts match your filters. Try clearing them or 
+        a(href="/posts/new") create the first one
+        | .
+  else
+    .list-grid
+      each post in posts
+        article.card.post-card
+          .post-card-score
+            span.score-number= post.score
+            span.score-label score
+          .post-card-body
             h2
               a(href=`/posts/${post.post_id}`)= post.title
-            p.meta By #{post.username} • #{post.category_name} • #{new Date(post.created_at).toLocaleDateString()}
+            p.meta
+              | by 
+              a(href=`/users/${post.user_id}`)= post.username
+              |  · 
+              a(href=`/categories/${post.category_id}`)= post.category_name
+              if post.game_title
+                |  · #{post.game_title}
+              |  · #{new Date(post.created_at).toLocaleDateString()}
             if post.is_spoiler
-              p.badge Spoiler
-            p= post.content.length > 160 ? post.content.substring(0, 160) + '...' : post.content
-            if post.tags
-              p.meta Tags: #{post.tags}
+              p
+                span.badge.badge-spoiler ⚠ Spoiler
+            p.post-excerpt= post.content.length > 200 ? post.content.substring(0, 200) + '…' : post.content
+            if post.tag_list
+              p.tag-list-inline
+                | Tags: 
+                = post.tag_list
