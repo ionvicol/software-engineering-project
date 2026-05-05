@@ -1,0 +1,134 @@
+name: CI
+
+# Two jobs:
+#   build : fast checks — lint, PUG compile, supertest smoke tests.
+#           Runs on every push/PR.
+#   e2e   : end-to-end browser tests via Nightwatch + headless Chrome.
+#           Boots a MySQL service container, seeds the schema, starts
+#           the app, then drives it with a real Chrome browser.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pg-sd2
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: pg-sd2/package-lock.json
+
+      - run: npm ci || npm install
+
+      - name: Lint (syntax-check every .js file)
+        run: npm run lint
+
+      - name: Compile every PUG view
+        run: |
+          node -e "
+            const fs = require('fs'), path = require('path'), pug = require('pug');
+            function walk(dir) {
+              for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+                const p = path.join(dir, entry.name);
+                if (entry.isDirectory()) walk(p);
+                else if (p.endsWith('.pug')) {
+                  try { pug.compileFile(p); console.log('OK', p); }
+                  catch (e) { console.error('FAIL', p, e.message); process.exit(1); }
+                }
+              }
+            }
+            walk('app/views');
+          "
+
+      - name: Run smoke tests (no DB)
+        run: npm test
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: build
+    defaults:
+      run:
+        working-directory: pg-sd2
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: sd2-db
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -ppassword"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      NODE_ENV: development
+      DB_CONTAINER: 127.0.0.1
+      DB_PORT: 3306
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: sd2-db
+      SESSION_SECRET: ci-secret
+      PORT: 3000
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: pg-sd2/package-lock.json
+
+      - run: npm ci || npm install
+
+      - name: Wait for MySQL and load schema
+        run: |
+          # Hosted runners ship with the mysql client.
+          for i in {1..30}; do
+            if mysqladmin ping -h 127.0.0.1 -P 3306 -uroot -ppassword --silent; then
+              echo "MySQL up"; break
+            fi
+            echo "waiting for mysql ($i)..."; sleep 2
+          done
+          mysql -h 127.0.0.1 -P 3306 -uroot -ppassword sd2-db < sd2-db.sql
+
+      - name: Hash seed passwords
+        run: npm run seed-passwords
+
+      - name: Start the app in the background
+        run: |
+          nohup node index.js > app.log 2>&1 &
+          echo $! > app.pid
+          # Wait until the app is accepting connections.
+          for i in {1..30}; do
+            if curl -fs http://localhost:3000/ > /dev/null; then
+              echo "App up"; break
+            fi
+            echo "waiting for app ($i)..."; sleep 1
+          done
+
+      - name: Run Nightwatch E2E tests
+        run: npm run test:e2e
+
+      - name: Show app log on failure
+        if: failure()
+        run: cat app.log || true
+
+      - name: Stop app
+        if: always()
+        run: kill $(cat app.pid) || true
