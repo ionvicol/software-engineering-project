@@ -15,7 +15,6 @@
 
 module.exports = {
   src_folders: ["tests/e2e"],
-  page_objects_path: ["tests/e2e/page-objects"],
 
   webdriver: {
     start_process: true,
